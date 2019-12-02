@@ -1,0 +1,13 @@
+[package]
+name = "adv-rs-2019"
+version = "0.1.0"
+authors = ["Antonio Scotti <zengar@gmail.com>"]
+edition = "2018"
+build = "build.rs"
+
+[dependencies]
+chrono = "0.4"
+regex = "1"
+
+[build-dependencies]
+chrono = "0.4"
