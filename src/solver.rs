@@ -1,17 +1,7 @@
-use std::{
-    fmt::Display,
-    fs::File,
-    io::{self, BufRead, BufReader},
-    path::Path,
-};
+use std::{fmt::Display, fs::File, io, path::Path};
 
 fn input_file(day: i32) -> String {
     format!("input/day{:02}", day)
-}
-
-pub fn read_to_vec<R: io::Read>(r: R) -> Vec<String> {
-    let r = BufReader::new(r);
-    r.lines().filter_map(|l| l.ok()).collect()
 }
 
 pub trait Solver {
