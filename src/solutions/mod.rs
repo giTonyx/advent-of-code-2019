@@ -10,6 +10,7 @@ mod day04;
 mod day03;
 mod day02;
 mod day05;
+mod day11;
 mod day10;
 
 pub fn exec_day(day: i32) {
@@ -23,6 +24,7 @@ pub fn exec_day(day: i32) {
         3 => day03::Problem {}.solve(day),
         2 => day02::Problem {}.solve(day),
         5 => day05::Problem {}.solve(day),
+        11 => day11::Problem {}.solve(day),
         10 => day10::Problem {}.solve(day),
         d => println!("Day {} hasn't been solved yet :(", d),
     }
