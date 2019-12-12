@@ -1,3 +1,4 @@
+mod intcode;
 mod solutions;
 mod solver;
 
