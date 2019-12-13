@@ -62,7 +62,7 @@ impl Memory {
 }
 
 pub struct IntCode {
-    memory: Memory,
+    pub memory: Memory,
     pub input: IntInput,
     program_counter: i64,
     pub last_output: i64,
