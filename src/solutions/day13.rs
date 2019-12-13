@@ -54,6 +54,7 @@ impl Solver for Problem {
 
 #[derive(PartialEq)]
 enum Cell {
+    EMPTY,
     BLOCK,
     WALL,
 }
@@ -75,6 +76,9 @@ impl Screen {
 
     pub fn set_tile(&mut self, x: i64, y: i64, tile: i64) {
         match tile {
+            0 => {
+                self.cells.insert((x, y), Cell::EMPTY);
+            }
             1 => {
                 self.cells.insert((x, y), Cell::WALL);
             }
