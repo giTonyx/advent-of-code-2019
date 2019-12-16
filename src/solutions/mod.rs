@@ -7,6 +7,7 @@ mod day08;
 mod day06;
 mod day01;
 mod day12;
+mod day14;
 mod day13;
 mod day04;
 mod day03;
@@ -23,6 +24,7 @@ pub fn exec_day(day: i32) {
         6 => day06::Problem {}.solve(day),
         1 => day01::Problem {}.solve(day),
         12 => day12::Problem {}.solve(day),
+        14 => day14::Problem {}.solve(day),
         13 => day13::Problem {}.solve(day),
         4 => day04::Problem {}.solve(day),
         3 => day03::Problem {}.solve(day),
