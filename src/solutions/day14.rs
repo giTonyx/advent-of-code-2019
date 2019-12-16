@@ -173,7 +173,7 @@ fn test_produce() {
     reactions.push(Reaction::from_string("2 TEST => 4 FUEL".to_string()));
     let mut factory = Factory::new(&reactions);
     assert!(factory.produce_one("TEST".to_string()) == 10);
-    assert!(factory.produce_one("FUEL".to_string()) == 10);
+    assert!(factory.produce_one("FUEL".to_string()) == 0);
 }
 
 #[test]
