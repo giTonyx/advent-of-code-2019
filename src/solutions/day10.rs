@@ -1,3 +1,4 @@
+use crate::coords::Coord;
 use crate::solver::Solver;
 use std::io::{BufRead, BufReader, Read};
 
@@ -84,12 +85,6 @@ fn has_los(source: &Coord, destination: &Coord, coords: &Vec<Coord>) -> bool {
     true
 }
 
-#[derive(Eq, PartialEq, Clone)]
-pub struct Coord {
-    x: u8,
-    y: u8,
-}
-
 impl Coord {
     pub fn slope(&self, other: &Coord) -> f64 {
         let delta_x = -(self.x as f64 - other.x as f64);
@@ -112,8 +107,8 @@ fn parse_map(string_data: &Vec<String>) -> Vec<Coord> {
         for x in 0..data.len() {
             if data.chars().nth(x).unwrap() == '#' {
                 coords.push(Coord {
-                    x: x as u8,
-                    y: y as u8,
+                    x: x as i64,
+                    y: y as i64,
                 });
             }
         }

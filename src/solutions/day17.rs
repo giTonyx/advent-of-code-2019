@@ -1,3 +1,4 @@
+use crate::coords::{Coord, Direction};
 use crate::intcode::{read_input, IntCode, IntInput};
 use crate::solver::Solver;
 use core::fmt;
@@ -351,70 +352,4 @@ fn test_can_compose() {
 enum Cell {
     EMPTY,
     SCAFFOLD,
-}
-
-#[derive(Eq, PartialEq, Hash, Copy, Clone)]
-struct Coord {
-    x: i64,
-    y: i64,
-}
-
-impl Coord {
-    pub fn next(&self, direction: &Direction) -> Coord {
-        match direction {
-            Direction::North => Coord {
-                x: self.x,
-                y: self.y - 1,
-            },
-            Direction::South => Coord {
-                x: self.x,
-                y: self.y + 1,
-            },
-            Direction::West => Coord {
-                x: self.x - 1,
-                y: self.y,
-            },
-            Direction::East => Coord {
-                x: self.x + 1,
-                y: self.y,
-            },
-        }
-    }
-}
-
-#[derive(Clone)]
-enum Direction {
-    North,
-    South,
-    West,
-    East,
-}
-
-impl Direction {
-    fn left(&self) -> Direction {
-        match self {
-            Direction::North => Direction::West,
-            Direction::West => Direction::South,
-            Direction::South => Direction::East,
-            Direction::East => Direction::North,
-        }
-    }
-
-    fn right(&self) -> Direction {
-        match self {
-            Direction::North => Direction::East,
-            Direction::West => Direction::North,
-            Direction::South => Direction::West,
-            Direction::East => Direction::South,
-        }
-    }
-
-    pub fn all() -> Vec<Direction> {
-        vec![
-            Direction::North,
-            Direction::South,
-            Direction::West,
-            Direction::East,
-        ]
-    }
 }

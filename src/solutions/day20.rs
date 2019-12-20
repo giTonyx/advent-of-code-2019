@@ -1,5 +1,5 @@
+use crate::coords::{Coord, Direction};
 use crate::solver::Solver;
-use core::fmt;
 use std::collections::{HashMap, HashSet, VecDeque};
 use std::io::{BufReader, Read};
 
@@ -388,73 +388,4 @@ FG..#########.....#
     assert!(tunnel.is_outer(Coord { x: 2, y: 16 }) == true);
     assert!(tunnel.is_outer(Coord { x: 11, y: 13 }) == false);
     assert!(tunnel.is_outer(Coord { x: 2, y: 9 }) == true);
-}
-
-#[derive(Clone)]
-enum Direction {
-    North,
-    South,
-    West,
-    East,
-}
-
-impl Direction {
-    pub fn all() -> Vec<Direction> {
-        vec![
-            Direction::North,
-            Direction::South,
-            Direction::West,
-            Direction::East,
-        ]
-    }
-}
-
-impl fmt::Debug for Direction {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(
-            f,
-            "{}",
-            match self {
-                Direction::North => "North",
-                Direction::South => "South",
-                Direction::West => "West",
-                Direction::East => "East",
-            }
-        )
-    }
-}
-
-#[derive(Eq, PartialEq, Hash, Copy, Clone)]
-struct Coord {
-    x: i64,
-    y: i64,
-}
-
-impl fmt::Debug for Coord {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "{},{}", self.x, self.y)
-    }
-}
-
-impl Coord {
-    pub fn next(&self, direction: &Direction) -> Coord {
-        match direction {
-            Direction::North => Coord {
-                x: self.x,
-                y: self.y - 1,
-            },
-            Direction::South => Coord {
-                x: self.x,
-                y: self.y + 1,
-            },
-            Direction::West => Coord {
-                x: self.x - 1,
-                y: self.y,
-            },
-            Direction::East => Coord {
-                x: self.x + 1,
-                y: self.y,
-            },
-        }
-    }
 }

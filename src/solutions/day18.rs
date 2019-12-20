@@ -1,3 +1,4 @@
+use crate::coords::{Coord, Direction};
 use crate::solver::Solver;
 use core::fmt;
 use std::collections::{HashMap, HashSet, VecDeque};
@@ -790,52 +791,4 @@ fn test_maze_from_string() {
     // assert!(maze.cells.len() == 27); // not passing anymore becaue of wall optimization
     assert!(maze.entrance.x == 5);
     assert!(maze.entrance.y == 1);
-}
-
-#[derive(Clone)]
-enum Direction {
-    North,
-    South,
-    West,
-    East,
-}
-
-impl Direction {
-    pub fn all() -> Vec<Direction> {
-        vec![
-            Direction::North,
-            Direction::South,
-            Direction::West,
-            Direction::East,
-        ]
-    }
-}
-
-#[derive(Eq, PartialEq, Hash, Copy, Clone)]
-struct Coord {
-    x: i64,
-    y: i64,
-}
-
-impl Coord {
-    pub fn next(&self, direction: &Direction) -> Coord {
-        match direction {
-            Direction::North => Coord {
-                x: self.x,
-                y: self.y - 1,
-            },
-            Direction::South => Coord {
-                x: self.x,
-                y: self.y + 1,
-            },
-            Direction::West => Coord {
-                x: self.x - 1,
-                y: self.y,
-            },
-            Direction::East => Coord {
-                x: self.x + 1,
-                y: self.y,
-            },
-        }
-    }
 }

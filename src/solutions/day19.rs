@@ -1,3 +1,4 @@
+use crate::coords::Coord;
 use crate::intcode::{read_input, IntCode, IntInput};
 use crate::solver::Solver;
 use std::collections::HashMap;
@@ -68,12 +69,6 @@ impl BeamMap {
         self.points.insert(coord, result);
         result
     }
-}
-
-#[derive(Eq, PartialEq, Hash, Copy, Clone)]
-struct Coord {
-    x: i64,
-    y: i64,
 }
 
 fn verify(

@@ -1,3 +1,4 @@
+use crate::coords::{Coord, Direction};
 use crate::intcode::{read_input, IntCode, IntInput};
 use crate::solver::Solver;
 use std::collections::{HashMap, HashSet, VecDeque};
@@ -29,14 +30,6 @@ impl Solver for Problem {
     }
 }
 
-#[derive(Clone)]
-enum Direction {
-    North,
-    South,
-    West,
-    East,
-}
-
 impl Direction {
     pub fn value(&self) -> i64 {
         match self {
@@ -44,44 +37,6 @@ impl Direction {
             Direction::South => 2,
             Direction::West => 3,
             Direction::East => 4,
-        }
-    }
-
-    pub fn all() -> Vec<Direction> {
-        vec![
-            Direction::North,
-            Direction::South,
-            Direction::West,
-            Direction::East,
-        ]
-    }
-}
-
-#[derive(Eq, PartialEq, Hash, Copy, Clone)]
-struct Coord {
-    x: i64,
-    y: i64,
-}
-
-impl Coord {
-    pub fn next(&self, direction: &Direction) -> Coord {
-        match direction {
-            Direction::North => Coord {
-                x: self.x,
-                y: self.y + 1,
-            },
-            Direction::South => Coord {
-                x: self.x,
-                y: self.y - 1,
-            },
-            Direction::West => Coord {
-                x: self.x - 1,
-                y: self.y,
-            },
-            Direction::East => Coord {
-                x: self.x + 1,
-                y: self.y,
-            },
         }
     }
 }
