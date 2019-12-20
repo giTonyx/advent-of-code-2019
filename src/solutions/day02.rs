@@ -1,3 +1,4 @@
+use crate::intcode::{IntCode, IntInput};
 use crate::solver::Solver;
 use std::io::{self, BufRead, BufReader};
 
@@ -34,34 +35,10 @@ impl Solver for Problem {
 }
 
 fn run_program(input: &Vec<i64>, noun: i64, verb: i64) -> i64 {
-    let mut program_input = input.clone();
-    program_input[1] = noun;
-    program_input[2] = verb;
-    run_intcode(&mut program_input);
-    program_input[0]
-}
-
-fn run_intcode(input: &mut Vec<i64>) {
-    let mut program_counter = 0;
-    loop {
-        match input[program_counter] {
-            1 => {
-                let store_idx = input[program_counter + 3] as usize;
-                let value1_idx = input[program_counter + 1] as usize;
-                let value2_idx = input[program_counter + 2] as usize;
-                input[store_idx] = input[value1_idx] + input[value2_idx];
-            }
-            2 => {
-                let store_idx = input[program_counter + 3] as usize;
-                let value1_idx = input[program_counter + 1] as usize;
-                let value2_idx = input[program_counter + 2] as usize;
-                input[store_idx] = input[value1_idx] * input[value2_idx];
-            }
-            99 => {
-                break;
-            }
-            _ => (println!("Unexpected OPCODE")),
-        }
-        program_counter += 4;
-    }
+    let mut intcode = IntCode::new(input);
+    intcode.memory.store(1, noun);
+    intcode.memory.store(2, verb);
+    let mut output = IntInput::new();
+    intcode.advance(&mut output);
+    intcode.memory.read(0)
 }
