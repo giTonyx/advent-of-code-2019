@@ -13,6 +13,7 @@ pub fn read_input<R: io::Read>(r: R) -> Vec<i64> {
 pub struct IntInput {
     data: Vec<i64>,
     counter: usize,
+    nonblocking: bool,
 }
 
 impl IntInput {
@@ -20,15 +21,25 @@ impl IntInput {
         IntInput {
             data: Vec::new(),
             counter: 0,
+            nonblocking: false,
         }
     }
+    pub fn set_nonblocking(&mut self) {
+        self.nonblocking = true;
+    }
     pub fn has_input(&self) -> bool {
+        if self.nonblocking {
+            return true;
+        }
         self.counter < self.data.len()
     }
     pub fn push(&mut self, value: i64) {
         self.data.push(value);
     }
     pub fn get(&mut self) -> i64 {
+        if self.nonblocking && self.data.len() <= self.counter {
+            return -1;
+        }
         self.counter += 1;
         self.data[self.counter - 1]
     }
@@ -121,88 +132,95 @@ impl IntCode {
         }
     }
 
-    pub fn advance(&mut self, output: &mut IntInput) {
+    pub fn step(&mut self, output: &mut IntInput) -> bool {
         if self.finished {
             println!("Computer called after having finished!");
-            return;
+            return false;
         }
+        let opcode = self.memory.read(self.program_counter) % 100;
+        let parameters = self.memory.read(self.program_counter) / 100;
+        match opcode {
+            1 => {
+                let store_idx = self.get_store_index(3, parameters);
+                let value1 = self.get_value(1, parameters);
+                let value2 = self.get_value(2, parameters);
+                self.memory.store(store_idx, value1 + value2);
+                self.program_counter += 4;
+            }
+            2 => {
+                let store_idx = self.get_store_index(3, parameters);
+                let value1 = self.get_value(1, parameters);
+                let value2 = self.get_value(2, parameters);
+                self.memory.store(store_idx, value1 * value2);
+                self.program_counter += 4;
+            }
+            3 => {
+                if !self.input.has_input() {
+                    return false;
+                }
+                let value = self.input.get();
+                let store_idx = self.get_store_index(1, parameters);
+                self.memory.store(store_idx, value);
+                self.program_counter += 2;
+            }
+            4 => {
+                let output_value = self.get_value(1, parameters);
+                self.last_output = output_value;
+                output.push(self.last_output);
+                self.program_counter += 2;
+            }
+            5 => {
+                let test_value = self.get_value(1, parameters);
+                let jump_location = self.get_value(2, parameters);
+                if test_value == 0 {
+                    self.program_counter += 3;
+                } else {
+                    self.program_counter = jump_location;
+                }
+            }
+            6 => {
+                let test_value = self.get_value(1, parameters);
+                let jump_location = self.get_value(2, parameters);
+                if test_value == 0 {
+                    self.program_counter = jump_location;
+                } else {
+                    self.program_counter += 3;
+                }
+            }
+            7 => {
+                let store_idx = self.get_store_index(3, parameters);
+                let value1 = self.get_value(1, parameters);
+                let value2 = self.get_value(2, parameters);
+                self.memory
+                    .store(store_idx, if value1 < value2 { 1 } else { 0 });
+                self.program_counter += 4;
+            }
+            8 => {
+                let store_idx = self.get_store_index(3, parameters);
+                let value1 = self.get_value(1, parameters);
+                let value2 = self.get_value(2, parameters);
+                self.memory
+                    .store(store_idx, if value1 == value2 { 1 } else { 0 });
+                self.program_counter += 4;
+            }
+            9 => {
+                let value = self.get_value(1, parameters);
+                self.relative_base += value;
+                self.program_counter += 2;
+            }
+            99 => {
+                self.finished = true;
+                return false;
+            }
+            _ => (println!("Unexpected OPCODE")),
+        }
+        true
+    }
+
+    pub fn advance(&mut self, output: &mut IntInput) {
         loop {
-            let opcode = self.memory.read(self.program_counter) % 100;
-            let parameters = self.memory.read(self.program_counter) / 100;
-            match opcode {
-                1 => {
-                    let store_idx = self.get_store_index(3, parameters);
-                    let value1 = self.get_value(1, parameters);
-                    let value2 = self.get_value(2, parameters);
-                    self.memory.store(store_idx, value1 + value2);
-                    self.program_counter += 4;
-                }
-                2 => {
-                    let store_idx = self.get_store_index(3, parameters);
-                    let value1 = self.get_value(1, parameters);
-                    let value2 = self.get_value(2, parameters);
-                    self.memory.store(store_idx, value1 * value2);
-                    self.program_counter += 4;
-                }
-                3 => {
-                    if !self.input.has_input() {
-                        return;
-                    }
-                    let value = self.input.get();
-                    let store_idx = self.get_store_index(1, parameters);
-                    self.memory.store(store_idx, value);
-                    self.program_counter += 2;
-                }
-                4 => {
-                    let output_value = self.get_value(1, parameters);
-                    self.last_output = output_value;
-                    output.push(self.last_output);
-                    self.program_counter += 2;
-                }
-                5 => {
-                    let test_value = self.get_value(1, parameters);
-                    let jump_location = self.get_value(2, parameters);
-                    if test_value == 0 {
-                        self.program_counter += 3;
-                    } else {
-                        self.program_counter = jump_location;
-                    }
-                }
-                6 => {
-                    let test_value = self.get_value(1, parameters);
-                    let jump_location = self.get_value(2, parameters);
-                    if test_value == 0 {
-                        self.program_counter = jump_location;
-                    } else {
-                        self.program_counter += 3;
-                    }
-                }
-                7 => {
-                    let store_idx = self.get_store_index(3, parameters);
-                    let value1 = self.get_value(1, parameters);
-                    let value2 = self.get_value(2, parameters);
-                    self.memory
-                        .store(store_idx, if value1 < value2 { 1 } else { 0 });
-                    self.program_counter += 4;
-                }
-                8 => {
-                    let store_idx = self.get_store_index(3, parameters);
-                    let value1 = self.get_value(1, parameters);
-                    let value2 = self.get_value(2, parameters);
-                    self.memory
-                        .store(store_idx, if value1 == value2 { 1 } else { 0 });
-                    self.program_counter += 4;
-                }
-                9 => {
-                    let value = self.get_value(1, parameters);
-                    self.relative_base += value;
-                    self.program_counter += 2;
-                }
-                99 => {
-                    self.finished = true;
-                    break;
-                }
-                _ => (println!("Unexpected OPCODE")),
+            if !self.step(output) {
+                break;
             }
         }
     }
